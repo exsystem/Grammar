@@ -1,54 +1,58 @@
-unit plugin;
+Unit plugin;
 {$mode delphi}
 
-interface
+Interface
 
-uses
+Uses
   ASTBINTF;
 
-procedure Init(Context: PContext);
-procedure ProcessToken(Context: PContext);
+Procedure Init(Context: PContext); Cdecl;
+Procedure ProcessToken(Context: PContext); Cdecl;
 
-implementation
+Implementation
 
-uses
+Uses
   SysUtils;
 
-function SubStr(S: PChar; FromIndex: integer; Len: integer): PChar;
-begin
-  Result := StrAlloc(Len + 1);
-  Move(S[FromIndex], Result[0], Len * SizeOf(char));
-  Result[Len] := #0;
-end;
-
-procedure Init(Context: PContext);
-begin
-  Context^.RegisterTermRule('@HEREDOC_END');
-end;
-
-procedure ProcessToken(Context: PContext);
-var
-  mMode, mTokenValue, mTokenKind: PChar;
+Var
   mHereDocId: PChar;
-begin
+
+Function SubStr(S: PChar; FromIndex: Integer; Len: Integer): PChar;
+Begin
+  Result := StrAlloc(Len + 1);
+  Move(S[FromIndex], Result[0], Len * SizeOf(Char));
+  Result[Len] := #0;
+End;
+
+Procedure Init(Context: PContext); Cdecl;
+Begin
+  Context^.RegisterTermRule(PChar('@HEREDOC_END'));
+End;
+
+Procedure ProcessToken(Context: PContext); Cdecl;
+Var
+  mMode, mTokenValue, mTokenKind: PChar;
+Begin
   mMode := Context^.GetMode;
   mTokenValue := Context^.GetTokenValue;
   mTokenKind := Context^.GetTokenKind;
-  if StrComp(mMode, 'hereDoc') <> 0 then
+  If StrComp(mMode, PChar('hereDoc')) <> 0 Then
+  Begin
     exit;
-  if StrComp(mTokenKind, 'START_HEREDOC') = 0 then
-  begin
+  End;
+  If StrComp(mTokenKind, PChar('START_HEREDOC')) = 0 Then
+  Begin
     mHereDocId := SubStr(mTokenValue, 3, StrLen(mTokenValue) - 3);
     exit;
-  end;
-  if (StrComp(mTokenKind, 'HEREDOC_TEXT') = 0) and
-    (StrPos(mTokenValue, mHereDocId) = mTokenValue) then
-  begin
-    Context^.InsertToken('@HEREDOC_END', mHereDocId);
+  End;
+  If (StrComp(mTokenKind, PChar('HEREDOC_TEXT')) = 0) And
+    (StrPos(mTokenValue, mHereDocId) = mTokenValue) Then
+  Begin
+    Context^.InsertToken(PChar('@HEREDOC_END'), mHereDocId);
     Context^.PopMode;
     StrDispose(mHereDocId);
     exit;
-  end;
-end;
+  End;
+End;
 
-end.
+End.

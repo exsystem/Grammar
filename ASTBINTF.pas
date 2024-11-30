@@ -3,12 +3,12 @@ unit ASTBINTF;
 interface
 
 type
-  TRegisterTermRule = procedure(Name: PChar);
-  TGetMode = function: PChar;
-  TGetTokenKind = function: PChar;
-  TGetTokenValue = function: PChar;
-  TInsertToken = procedure(Kind, Value: PChar);
-  TPopMode = procedure;
+  TRegisterTermRule = procedure(Name: PChar); cdecl;
+  TGetMode = function: PChar; cdecl;
+  TGetTokenKind = function: PChar; cdecl;
+  TGetTokenValue = function: PChar; cdecl;
+  TInsertToken = procedure(Kind, Value: PChar); cdecl;
+  TPopMode = procedure; cdecl;
 
   PContext = ^TContext;
   TContext = record
